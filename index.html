@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Jay Stores - E-Commerce Product Showcase</title>
+	<link rel="stylesheet" href="style.css">
+	<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Jay Stores - Amazon Clone</title>
+	<link rel="stylesheet" href="style.css">
+	<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+</head>
+<body>
+	<!-- Header/Navbar -->
+	<header class="navbar">
+		<div class="navbar-left">
+			<div class="brand">
+				<div class="logo-circle"><span>J</span></div>
+				<span class="brand-name">Jay Stores</span>
+			</div>
+			<nav class="main-nav">
+				<a href="#" class="nav-link active">Home</a>
+				<a href="#" class="nav-link">Deals</a>
+				<a href="#" class="nav-link">Orders</a>
+				<a href="#" class="nav-link">Account</a>
+			</nav>
+		</div>
+		<form class="search-bar" autocomplete="off">
+			<input type="text" id="searchInput" placeholder="Search for products, brands and more...">
+			<button type="submit"><span class="icon-search"></span></button>
+		</form>
+		<div class="navbar-right">
+			<select id="categoryDropdown" class="category-dropdown">
+				<option value="all">All Categories</option>
+				<option value="electronics">Electronics</option>
+				<option value="fashion">Fashion</option>
+				<option value="home">Home</option>
+			</select>
+			<span class="icon-wishlist" id="wishlistIcon" title="Wishlist"></span>
+			<span class="icon-cart" id="cartIcon" title="Cart"><span id="cartCount">0</span></span>
+			<span class="icon-theme-toggle" id="themeToggle" title="Toggle dark/light mode"></span>
+		</div>
+	</header>
+
+	<div class="main-content">
+		<!-- Sidebar Filters -->
+		<aside class="sidebar">
+			<h3>Categories</h3>
+			<ul class="sidebar-categories">
+				<li><button class="filter-btn active" data-category="all">All</button></li>
+				<li><button class="filter-btn" data-category="electronics">Electronics</button></li>
+				<li><button class="filter-btn" data-category="fashion">Fashion</button></li>
+				<li><button class="filter-btn" data-category="home">Home</button></li>
+			</ul>
+			<div class="sidebar-deal">
+				<h4>Deal of the Day</h4>
+				<div class="deal-image"></div>
+				<div class="deal-info">
+					<div class="deal-title" id="dealTitle"></div>
+					<div class="deal-price" id="dealPrice"></div>
+					<div class="deal-timer"><span id="dealTimer"></span> left</div>
+					<button id="dealAddToCart">Add to Cart</button>
+				</div>
+			</div>
+		</aside>
+
+		<section class="main-section">
+			<!-- Carousel/Slider -->
+			<section class="carousel" id="carousel">
+				<div class="carousel-track">
+					<!-- Slides will be injected by JS -->
+				</div>
+				<button class="carousel-btn prev">&#10094;</button>
+				<button class="carousel-btn next">&#10095;</button>
+			</section>
+
+			<!-- Product Grid -->
+			<main class="product-grid" id="productGrid">
+				<!-- Product cards will be injected by JS -->
+			</main>
+		</section>
+	</div>
+
+	<!-- Product Modal -->
+	<div class="modal" id="productModal">
+		<div class="modal-content">
+			<span class="close-modal" id="closeModal">&times;</span>
+			<div class="modal-image" id="modalImage"></div>
+			<div class="modal-details">
+				<h2 id="modalTitle"></h2>
+				<div class="modal-rating" id="modalRating"></div>
+				<div class="modal-price" id="modalPrice"></div>
+				<p id="modalDesc"></p>
+				<div class="modal-actions">
+					<button id="modalAddToCart">Add to Cart</button>
+					<button id="modalAddToWishlist">Add to Wishlist</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Floating Cart Icon (Mobile) -->
+	<div class="floating-cart" id="floatingCart">
+		<span class="icon-cart"></span>
+		<span id="floatingCartCount">0</span>
+	</div>
+
+	<script src="script.js"></script>
+</body>
+</html>
+			<span class="icon-cart"></span>
+			<span id="floatingCartCount">0</span>
+		</div>
+
+	<script src="script.js"></script>
+</body>
+</html>
