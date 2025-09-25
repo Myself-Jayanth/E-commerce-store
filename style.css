@@ -301,7 +301,7 @@ body {
 	color: #fff;
 }
 [data-theme="dark"] .product-title {
-	color: #000;
+	color: #fff;
 }
 .product-card:hover {
 	box-shadow: 0 6px 24px #2874f044;
