@@ -144,29 +144,123 @@ function updateWishlistIcon() {
 function renderCartModal() {
 	let modal = document.createElement('div');
 	modal.className = 'modal open';
-	modal.innerHTML = `<div class='modal-content' style='min-width:320px;max-width:95vw;'>
+	let totalAmount = cart.reduce((sum, item) => sum + products.find(p=>p.id===item.id).price*item.qty, 0);
+	modal.innerHTML = `<div class='modal-content cart-modal' style='min-width:400px;max-width:95vw;max-height:80vh;overflow-y:auto;'>
 		<span class='close-modal'>&times;</span>
 		<h2>Your Cart</h2>
-		<div style='margin:1em 0;'>${cart.length === 0 ? '<div style="color:#888;">Cart is empty.</div>' : cart.map(item => {
+		<div class='cart-items' style='margin:1em 0;max-height:300px;overflow-y:auto;'>${cart.length === 0 ? '<div style="color:#888;text-align:center;padding:2em;">Cart is empty.</div>' : cart.map(item => {
 			let p = products.find(pr => pr.id === item.id);
-			return `<div style='display:flex;align-items:center;gap:1em;margin-bottom:1em;'>
-				<div style='width:48px;height:48px;background:url(${p.image}) center/cover;border-radius:6px;'></div>
-				<div style='flex:1;'>${p.name}<br><span style='color:#2874f0;'>₹${p.price}</span> x ${item.qty}</div>
-				<button class='cart-remove' data-id='${p.id}' style='background:#ff9900;border:none;color:#fff;padding:0.3em 0.7em;border-radius:4px;cursor:pointer;'>Remove</button>
+			return `<div class='cart-item' style='display:flex;align-items:center;gap:1em;margin-bottom:1em;padding:1em;border:1px solid var(--border);border-radius:8px;'>
+				<div style='width:60px;height:60px;background:url(${p.image}) center/cover;border-radius:6px;flex-shrink:0;'></div>
+				<div style='flex:1;'>
+					<div style='font-weight:bold;margin-bottom:0.3em;'>${p.name}</div>
+					<div style='color:#2874f0;font-weight:bold;'>₹${p.price}</div>
+				</div>
+				<div style='display:flex;align-items:center;gap:0.5em;'>
+					<button class='qty-btn' data-id='${p.id}' data-action='decrease' style='background:#f0f0f0;border:1px solid #ddd;width:30px;height:30px;border-radius:4px;cursor:pointer;'>-</button>
+					<span style='min-width:30px;text-align:center;font-weight:bold;'>${item.qty}</span>
+					<button class='qty-btn' data-id='${p.id}' data-action='increase' style='background:#f0f0f0;border:1px solid #ddd;width:30px;height:30px;border-radius:4px;cursor:pointer;'>+</button>
+				</div>
+				<button class='cart-remove' data-id='${p.id}' style='background:#ff6b6b;border:none;color:#fff;padding:0.4em 0.8em;border-radius:4px;cursor:pointer;margin-left:0.5em;'>Remove</button>
 			</div>`;
 		}).join('')}</div>
-		<div style='font-weight:bold;'>Total: ₹${cart.reduce((sum, item) => sum + products.find(p=>p.id===item.id).price*item.qty, 0)}</div>
+		${cart.length > 0 ? `
+			<div style='border-top:2px solid var(--border);padding-top:1em;margin-top:1em;'>
+				<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:1em;'>
+					<span style='font-size:1.2em;font-weight:bold;'>Total: ₹${totalAmount}</span>
+				</div>
+				<div style='display:flex;gap:1em;'>
+					<button id='clearCart' style='background:#ff6b6b;color:#fff;border:none;padding:0.7em 1.5em;border-radius:6px;cursor:pointer;flex:1;'>Clear Cart</button>
+					<button id='placeOrder' style='background:#28a745;color:#fff;border:none;padding:0.7em 1.5em;border-radius:6px;cursor:pointer;flex:2;font-weight:bold;'>Place Order</button>
+				</div>
+			</div>
+		` : ''}
 	</div>`;
 	document.body.appendChild(modal);
 	modal.querySelector('.close-modal').onclick = () => modal.remove();
+	
+	// Quantity change buttons
+	modal.querySelectorAll('.qty-btn').forEach(btn => btn.onclick = (e) => {
+		let id = +btn.dataset.id;
+		let action = btn.dataset.action;
+		let item = cart.find(i => i.id === id);
+		
+		if (action === 'increase') {
+			item.qty++;
+		} else if (action === 'decrease' && item.qty > 1) {
+			item.qty--;
+		}
+		
+		localStorage.setItem('cart', JSON.stringify(cart));
+		updateCartCount();
+		modal.remove();
+		renderCartModal();
+	});
+	
+	// Remove item buttons
 	modal.querySelectorAll('.cart-remove').forEach(btn => btn.onclick = (e) => {
 		let id = +btn.dataset.id;
 		cart = cart.filter(i => i.id !== id);
 		localStorage.setItem('cart', JSON.stringify(cart));
 		updateCartCount();
 		modal.remove();
-		renderCartModal();
+		if (cart.length > 0) renderCartModal();
 	});
+	
+	// Clear cart button
+	const clearCartBtn = modal.querySelector('#clearCart');
+	if (clearCartBtn) {
+		clearCartBtn.onclick = () => {
+			cart = [];
+			localStorage.setItem('cart', JSON.stringify(cart));
+			updateCartCount();
+			modal.remove();
+			showPopup('Cart cleared!');
+		};
+	}
+	
+	// Place order button
+	const placeOrderBtn = modal.querySelector('#placeOrder');
+	if (placeOrderBtn) {
+		placeOrderBtn.onclick = () => {
+			let orderSummary = cart.map(item => {
+				let p = products.find(pr => pr.id === item.id);
+				return `${p.name} x ${item.qty}`;
+			}).join(', ');
+			
+			// Simulate order placement
+			cart = [];
+			localStorage.setItem('cart', JSON.stringify(cart));
+			updateCartCount();
+			modal.remove();
+			
+			// Show order confirmation
+			showOrderConfirmation(orderSummary, totalAmount);
+		};
+	}
+	
+	modal.onclick = e => { if (e.target === modal) modal.remove(); };
+}
+
+// Order confirmation function
+function showOrderConfirmation(orderSummary, total) {
+	let modal = document.createElement('div');
+	modal.className = 'modal open';
+	modal.innerHTML = `<div class='modal-content' style='text-align:center;max-width:500px;'>
+		<span class='close-modal'>&times;</span>
+		<div style='color:#28a745;font-size:3em;margin-bottom:0.5em;'>✓</div>
+		<h2 style='color:#28a745;margin-bottom:1em;'>Order Placed Successfully!</h2>
+		<div style='background:#f8f9fa;padding:1em;border-radius:8px;margin:1em 0;'>
+			<div style='font-weight:bold;margin-bottom:0.5em;'>Order Summary:</div>
+			<div style='color:#666;margin-bottom:0.5em;'>${orderSummary}</div>
+			<div style='font-weight:bold;color:#2874f0;'>Total: ₹${total}</div>
+		</div>
+		<div style='color:#666;margin:1em 0;'>Order ID: #${Math.random().toString(36).substr(2, 9).toUpperCase()}</div>
+		<div style='color:#666;font-size:0.9em;'>You will receive a confirmation email shortly.</div>
+		<button onclick='this.closest(".modal").remove()' style='background:#2874f0;color:#fff;border:none;padding:0.7em 2em;border-radius:6px;cursor:pointer;margin-top:1em;'>Continue Shopping</button>
+	</div>`;
+	document.body.appendChild(modal);
+	modal.querySelector('.close-modal').onclick = () => modal.remove();
 	modal.onclick = e => { if (e.target === modal) modal.remove(); };
 }
 cartIcon.onclick = renderCartModal;

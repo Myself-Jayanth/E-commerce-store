@@ -296,6 +296,13 @@ body {
 	min-width: 0;
 	transition: box-shadow var(--transition), transform var(--transition);
 }
+[data-theme="dark"] .product-card {
+	background: #2a2a2a;
+	color: #fff;
+}
+[data-theme="dark"] .product-title {
+	color: #000;
+}
 .product-card:hover {
 	box-shadow: 0 6px 24px #2874f044;
 	transform: translateY(-4px) scale(1.03);
